@@ -21,10 +21,10 @@ func Marshal(w io.Writer, v interface{}) error {
 
 	ymap := make(map[interface{}]interface{})
 	for i := 0; i < rv.NumField(); i++ {
-		fn := rt.Field(i).Name
+		ft := rt.Field(i).Tag.Get("conf")
 		fv := rv.Field(i).Interface()
 
-		ymap[fn] = fv
+		ymap[ft] = fv
 	}
 
 	out, err := yaml.Marshal(ymap)
@@ -52,14 +52,14 @@ func Unmarshal(r io.Reader, v interface{}) error {
 	rt := rv.Type()
 
 	for i := 0; i < rv.NumField(); i++ {
-		fn := rt.Field(i).Name
+		ft := rt.Field(i).Tag.Get("conf")
 
 		if !rv.Field(i).CanSet() {
 			return ErrFieldUnsettable
 		}
 
-		if _, ok := ymap[fn]; ok {
-			rv.Field(i).Set(reflect.ValueOf(ymap[fn]))
+		if _, ok := ymap[ft]; ok {
+			rv.Field(i).Set(reflect.ValueOf(ymap[ft]))
 		}
 	}
 

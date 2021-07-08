@@ -13,8 +13,8 @@ type TestConf struct {
 	Str string `conf:"str"`
 }
 
-var expectedYML = `Num: 99116
-Str: ct
+var expectedYML = `num: 99116
+str: ct
 `
 
 var expectedConf = TestConf{
