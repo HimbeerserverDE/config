@@ -1,7 +1,6 @@
 package config_test
 
 import (
-	"bytes"
 	"strings"
 	"testing"
 
@@ -23,13 +22,13 @@ var expectedConf = TestConf{
 }
 
 func TestMarshal(t *testing.T) {
-	buf := &bytes.Buffer{}
+	buf := &strings.Builder{}
 	if err := config.Marshal(buf, expectedConf); err != nil {
 		t.Log(err)
 		t.FailNow()
 	}
 
-	if yml := string(buf.Bytes()); yml != expectedYML {
+	if yml := buf.String(); yml != expectedYML {
 		t.Log("incorrect YAML result")
 		t.Log(yml)
 		t.FailNow()
