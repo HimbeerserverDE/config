@@ -11,6 +11,8 @@ import (
 type TestConf struct {
 	TFV bool              `conf:"tfv"`
 	Num int               `conf:"num"`
+	UNum uint             `conf:"unum"`
+	FNum float32          `conf:"fnum"`
 	Str string            `conf:"str"`
 	Arr []string          `conf:"arr"`
 	Map map[string]string `conf:"map"`
@@ -24,18 +26,22 @@ type TestConf2 struct {
 var expectedYML = `arr:
 - foo
 - bar
+fnum: 13.37
 map:
   foo: bar
-num: 1337
+num: -1337
 str: foo
 t2:
   str: bar
 tfv: true
+unum: 1337
 `
 
 var expectedConf = TestConf{
 	TFV: true,
-	Num: 1337,
+	Num: -1337,
+	UNum: 1337,
+	FNum: 13.37,
 	Str: "foo",
 	Arr: []string{"foo", "bar"},
 	Map: map[string]string{"foo": "bar"},

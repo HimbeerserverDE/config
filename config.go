@@ -13,10 +13,16 @@ import (
 )
 
 var ErrFieldUnsettable = errors.New("struct field not settable")
+var ErrInvalidDataType = errors.New("use of invalid data type")
 
 // Marshal writes a configuration to the specified Writer
 func Marshal(w io.Writer, v interface{}) error {
 	yml := marshal(v).(map[interface{}]interface{})
+	if r := recover(); r != nil {
+		if _, ok := r.(error); ok {
+			return r.(error)
+		}
+	}
 
 	out, err := yaml.Marshal(yml)
 	if err != nil {
@@ -40,6 +46,12 @@ func Unmarshal(r io.Reader, v interface{}) error {
 	}
 
 	unmarshal(ymap, reflect.Indirect(reflect.ValueOf(v)))
+
+	if r := recover(); r != nil {
+		if _, ok := r.(error); ok {
+			return r.(error)
+		}
+	}
 	return nil
 }
 
@@ -57,6 +69,18 @@ func marshal(v interface{}) interface{} {
 		}
 
 		return m
+	case reflect.Complex64:
+		fallthrough
+	case reflect.Complex128:
+		fallthrough
+	case reflect.Chan:
+		fallthrough
+	case reflect.Func:
+		fallthrough
+	case reflect.Ptr:
+		fallthrough
+	case reflect.UnsafePointer:
+		panic(ErrInvalidDataType)
 	default:
 		return v
 	}
@@ -100,6 +124,40 @@ func unmarshal(yml interface{}, rv reflect.Value) {
 
 			rv.Field(i).Set(fv)
 		}
+	case reflect.Complex64:
+		fallthrough
+	case reflect.Complex128:
+		fallthrough
+	case reflect.Chan:
+		fallthrough
+	case reflect.Func:
+		fallthrough
+	case reflect.Ptr:
+		fallthrough
+	case reflect.UnsafePointer:
+		panic(ErrInvalidDataType)
+	case reflect.Int8:
+		rv.Set(reflect.ValueOf(int8(yml.(int))))
+	case reflect.Int16:
+		rv.Set(reflect.ValueOf(int16(yml.(int))))
+	case reflect.Int32:
+		rv.Set(reflect.ValueOf(int32(yml.(int))))
+	case reflect.Int64:
+		rv.Set(reflect.ValueOf(int64(yml.(int))))
+	case reflect.Uint:
+		rv.Set(reflect.ValueOf(uint(yml.(int))))
+	case reflect.Uint8:
+		rv.Set(reflect.ValueOf(uint8(yml.(int))))
+	case reflect.Uint16:
+		rv.Set(reflect.ValueOf(uint16(yml.(int))))
+	case reflect.Uint32:
+		rv.Set(reflect.ValueOf(uint32(yml.(int))))
+	case reflect.Uint64:
+		rv.Set(reflect.ValueOf(uint64(yml.(int))))
+	case reflect.Uintptr:
+		rv.Set(reflect.ValueOf(uintptr(yml.(int))))
+	case reflect.Float32:
+		rv.Set(reflect.ValueOf(float32(yml.(float64))))
 	default:
 		rv.Set(reflect.ValueOf(yml))
 	}
