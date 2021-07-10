@@ -2,6 +2,7 @@ package config_test
 
 import (
 	"bytes"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -9,17 +10,39 @@ import (
 )
 
 type TestConf struct {
-	Num int    `conf:"num"`
+	TFV bool              `conf:"tfv"`
+	Num int               `conf:"num"`
+	Str string            `conf:"str"`
+	Arr []string          `conf:"arr"`
+	Map map[string]string `conf:"map"`
+	T2  TestConf2         `conf:"t2"`
+}
+
+type TestConf2 struct {
 	Str string `conf:"str"`
 }
 
-var expectedYML = `num: 99116
-str: ct
+var expectedYML = `arr:
+- foo
+- bar
+map:
+  foo: bar
+num: 1337
+str: foo
+t2:
+  str: bar
+tfv: true
 `
 
 var expectedConf = TestConf{
-	Num: 99116,
-	Str: "ct",
+	TFV: true,
+	Num: 1337,
+	Str: "foo",
+	Arr: []string{"foo", "bar"},
+	Map: map[string]string{"foo": "bar"},
+	T2: TestConf2{
+		Str: "bar",
+	},
 }
 
 func TestMarshal(t *testing.T) {
@@ -44,7 +67,7 @@ func TestUnmarshal(t *testing.T) {
 		t.FailNow()
 	}
 
-	if c.Num != expectedConf.Num || c.Str != expectedConf.Str {
+	if !reflect.DeepEqual(c, expectedConf) {
 		t.Log("incorrect configuration result")
 		t.Log(c)
 		t.FailNow()
