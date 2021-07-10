@@ -91,6 +91,10 @@ func unmarshal(yml interface{}, rv reflect.Value) {
 
 	switch rv.Kind() {
 	case reflect.Array:
+		if yml == nil {
+			return
+		}
+
 		for i := 0; i < rv.Cap(); i++ {
 			fv := reflect.Indirect(reflect.New(rv.Index(i).Type()))
 			unmarshal(yml.([]interface{})[i], fv)
@@ -98,6 +102,10 @@ func unmarshal(yml interface{}, rv reflect.Value) {
 			rv.Index(i).Set(fv)
 		}
 	case reflect.Slice:
+		if yml == nil {
+			return
+		}
+
 		yarr := yml.([]interface{})
 		for i := 0; i < len(yarr); i++ {
 			sv := reflect.MakeSlice(rv.Type(), 1, 1)
@@ -107,6 +115,10 @@ func unmarshal(yml interface{}, rv reflect.Value) {
 			rv.Set(reflect.Append(rv, fv))
 		}
 	case reflect.Map:
+		if yml == nil {
+			return
+		}
+
 		rv.Set(reflect.MakeMap(rv.Type()))
 
 		ymap := yml.(map[interface{}]interface{})
@@ -117,6 +129,10 @@ func unmarshal(yml interface{}, rv reflect.Value) {
 			rv.SetMapIndex(reflect.ValueOf(k), fv)
 		}
 	case reflect.Struct:
+		if yml == nil {
+			return
+		}
+
 		for i := 0; i < rv.NumField(); i++ {
 			ft := rt.Field(i).Tag.Get("conf")
 			fv := reflect.Indirect(reflect.New(rv.Field(i).Type()))
@@ -137,28 +153,74 @@ func unmarshal(yml interface{}, rv reflect.Value) {
 	case reflect.UnsafePointer:
 		panic(ErrInvalidDataType)
 	case reflect.Int8:
-		rv.Set(reflect.ValueOf(int8(yml.(int))))
+		if yml != nil {
+			rv.Set(reflect.ValueOf(int8(yml.(int))))
+		} else {
+			rv.Set(reflect.ValueOf(int8(0)))
+		}
 	case reflect.Int16:
-		rv.Set(reflect.ValueOf(int16(yml.(int))))
+		if yml != nil {
+			rv.Set(reflect.ValueOf(int16(yml.(int))))
+		} else {
+			rv.Set(reflect.ValueOf(int16(0)))
+		}
 	case reflect.Int32:
-		rv.Set(reflect.ValueOf(int32(yml.(int))))
+		if yml != nil {
+			rv.Set(reflect.ValueOf(int32(yml.(int))))
+		} else {
+			rv.Set(reflect.ValueOf(int32(0)))
+		}
 	case reflect.Int64:
-		rv.Set(reflect.ValueOf(int64(yml.(int))))
+		if yml != nil {
+			rv.Set(reflect.ValueOf(int64(yml.(int))))
+		} else {
+			rv.Set(reflect.ValueOf(int64(0)))
+		}
 	case reflect.Uint:
-		rv.Set(reflect.ValueOf(uint(yml.(int))))
+		if yml != nil {
+			rv.Set(reflect.ValueOf(uint(yml.(int))))
+		} else {
+			rv.Set(reflect.ValueOf(uint(0)))
+		}
 	case reflect.Uint8:
-		rv.Set(reflect.ValueOf(uint8(yml.(int))))
+		if yml != nil {
+			rv.Set(reflect.ValueOf(uint8(yml.(int))))
+		} else {
+			rv.Set(reflect.ValueOf(uint8(0)))
+		}
 	case reflect.Uint16:
-		rv.Set(reflect.ValueOf(uint16(yml.(int))))
+		if yml != nil {
+			rv.Set(reflect.ValueOf(uint16(yml.(int))))
+		} else {
+			rv.Set(reflect.ValueOf(uint16(0)))
+		}
 	case reflect.Uint32:
-		rv.Set(reflect.ValueOf(uint32(yml.(int))))
+		if yml != nil {
+			rv.Set(reflect.ValueOf(uint32(yml.(int))))
+		} else {
+			rv.Set(reflect.ValueOf(uint32(0)))
+		}
 	case reflect.Uint64:
-		rv.Set(reflect.ValueOf(uint64(yml.(int))))
+		if yml != nil {
+			rv.Set(reflect.ValueOf(uint64(yml.(int))))
+		} else {
+			rv.Set(reflect.ValueOf(uint64(0)))
+		}
 	case reflect.Uintptr:
-		rv.Set(reflect.ValueOf(uintptr(yml.(int))))
+		if yml != nil {
+			rv.Set(reflect.ValueOf(uintptr(yml.(int))))
+		} else {
+			rv.Set(reflect.ValueOf(uintptr(0)))
+		}
 	case reflect.Float32:
-		rv.Set(reflect.ValueOf(float32(yml.(float64))))
+		if yml != nil {
+			rv.Set(reflect.ValueOf(float32(yml.(float64))))
+		} else {
+			rv.Set(reflect.ValueOf(float32(0)))
+		}
 	default:
-		rv.Set(reflect.ValueOf(yml))
+		if yml != nil {
+			rv.Set(reflect.ValueOf(yml))
+		}
 	}
 }
