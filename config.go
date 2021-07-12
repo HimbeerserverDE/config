@@ -69,17 +69,7 @@ func marshal(v interface{}) interface{} {
 		}
 
 		return m
-	case reflect.Complex64:
-		fallthrough
-	case reflect.Complex128:
-		fallthrough
-	case reflect.Chan:
-		fallthrough
-	case reflect.Func:
-		fallthrough
-	case reflect.Ptr:
-		fallthrough
-	case reflect.UnsafePointer:
+	case reflect.Complex64, reflect.Complex128, reflect.Chan, reflect.Func, reflect.Ptr, reflect.UnsafePointer:
 		panic(ErrInvalidDataType)
 	default:
 		return v
@@ -140,17 +130,7 @@ func unmarshal(yml interface{}, rv reflect.Value) {
 
 			rv.Field(i).Set(fv)
 		}
-	case reflect.Complex64:
-		fallthrough
-	case reflect.Complex128:
-		fallthrough
-	case reflect.Chan:
-		fallthrough
-	case reflect.Func:
-		fallthrough
-	case reflect.Ptr:
-		fallthrough
-	case reflect.UnsafePointer:
+	case reflect.Complex64, reflect.Complex128, reflect.Chan, reflect.Func, reflect.Ptr, reflect.UnsafePointer:
 		panic(ErrInvalidDataType)
 	case reflect.Int8:
 		if yml != nil {
